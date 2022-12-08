@@ -1,3 +1,4 @@
+import os
 import scipy, json
 import numpy as np
 import casadi as ca
@@ -30,33 +31,33 @@ def get_chain_params():
 
 
 def compute_steady_state(n_mass, m, D, L, xPosFirstMass, xEndRef):
-    
+
     model = export_chain_mass_model(n_mass, m, D, L)
     nx = model.x.shape[0]
     M = int((nx/3 -1)/2)
-    
+
     # initial guess for state
     pos0_x = np.linspace(xPosFirstMass[0], xEndRef[0], n_mass)
     x0 = np.zeros((nx, 1))
     x0[:3*(M+1):3] = pos0_x[1:].reshape((M+1,1))
-    
+
     # decision variables
     w = [model.x, model.xdot, model.u]
     # initial guess
     w0 = ca.vertcat(*[x0, np.zeros(model.xdot.shape), np.zeros(model.u.shape)])
-    
+
     # constraints
     g = []
     g += [model.f_impl_expr]                        # steady state
     g += [model.x[3*M:3*(M+1)]  - xEndRef]          # fix position of last mass
     g += [model.u]                                  # don't actuate controlled mass
-    
+
     # misuse IPOPT as nonlinear equation solver
     nlp = {'x': ca.vertcat(*w), 'f': 0, 'g': ca.vertcat(*g)}
-    
+
     solver = ca.nlpsol('solver', 'ipopt', nlp)
     sol = solver(x0=w0,lbg=0,ubg=0)
-    
+
     wrest = sol['x'].full()
     xrest = wrest[:nx]
 
@@ -164,8 +165,11 @@ def save_closed_loop_results_as_json(ID, timings, timings_P, wall_dist, chain_pa
     result_dict["timings_P"] = timings_P
     result_dict["chain_params"] = chain_params
 
-    json_file = 'results/' + ID + '_nm_' + str(chain_params["n_mass"]) + \
-         '_seed_' + str(chain_params["seed"]) + '_iter_' + str(chain_params["nlp_iter"]) + '.json'
+    if not os.path.isdir('results'):
+        os.makedirs('results')
+
+    json_file = os.path.join('results', ID + '_nm_' + str(chain_params["n_mass"]) + \
+         '_seed_' + str(chain_params["seed"]) + '_iter_' + str(chain_params["nlp_iter"]) + '.json')
 
     save_results_as_json(result_dict, json_file)
 
@@ -174,8 +178,12 @@ def save_closed_loop_results_as_json(ID, timings, timings_P, wall_dist, chain_pa
 
 
 def load_results_from_json(ID, chain_params):
-    json_file = 'results/' + ID + '_nm_' + str(chain_params["n_mass"]) + \
-         '_seed_' + str(chain_params["seed"]) + '_iter_' + str(chain_params["nlp_iter"]) + '.json'
+
+    if not os.path.isdir('results'):
+        os.makedirs('results')
+
+    json_file = os.path.join('results', ID + '_nm_' + str(chain_params["n_mass"]) + \
+         '_seed_' + str(chain_params["seed"]) + '_iter_' + str(chain_params["nlp_iter"]) + '.json')
 
     with open(json_file, 'r') as f:
         results = json.load(f)

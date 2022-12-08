@@ -209,7 +209,7 @@ def ZO_robust(chain_params):
             B = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
             for stage in range(N):
                 # get A matrices
-                A = acados_ocp_solver.dynamics_get(stage, "A")
+                A = acados_ocp_solver.get_from_qp_in(stage, "A")
                 # propagate Ps
 
                 P_mat_list[stage+1] = P_propagation(P_mat_list[stage], A, B, W*Ts)
@@ -245,7 +245,7 @@ def ZO_robust(chain_params):
         # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")
         if status != 0:
             raise Exception('acados acados_ocp_solver returned status {} in time step {}. Exiting.'.format(status, i))
-            
+
     simU[0,:] = acados_ocp_solver.get(0, "u")
 
     # only LQR
