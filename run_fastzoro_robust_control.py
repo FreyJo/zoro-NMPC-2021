@@ -49,7 +49,7 @@ from plot_utils import *
 from utils import *
 import matplotlib.pyplot as plt
 
-from zoro_description import ZoroDescription, process_zoro_stuff
+from zoro_description import ZoroDescription, process_zoro_description
 
 def run_fastzoro_robust_control(chain_params):
     ID = "fastzoRO"
@@ -204,15 +204,15 @@ def run_fastzoro_robust_control(chain_params):
         ('custom_update_function_zoro_template.in.h', 'custom_update_function.h'),
     ]
     # zoro stuff
-    zoro_stuff = ZoroDescription()
+    zoro_description = ZoroDescription()
     # uncertainty propagation: P_{k+1} = (A_k+B_kK) @ P_k @ (A_k+B_kK)^T + G @ W @ G^T
     # G.shape = (nx, nw), W.shape = (nw, nw)
-    zoro_stuff.fdbk_K_mat = np.zeros((nu, nx))
-    zoro_stuff.unc_jac_G_mat = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
-    zoro_stuff.P0_mat = 1e-3 * np.eye(nx)
-    zoro_stuff.W_mat = W*Ts
-    zoro_stuff.idx_lbx_t = list(range(nbx))
-    ocp.zoro_stuff = process_zoro_stuff(zoro_stuff)
+    zoro_description.fdbk_K_mat = np.zeros((nu, nx))
+    zoro_description.unc_jac_G_mat = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
+    zoro_description.P0_mat = 1e-3 * np.eye(nx)
+    zoro_description.W_mat = W*Ts
+    zoro_description.idx_lbx_t = list(range(nbx))
+    ocp.zoro_description = process_zoro_description(zoro_description)
 
     # acados_integrator = AcadosSimSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
     acados_integrator = export_chain_mass_integrator(n_mass, m, D, L)

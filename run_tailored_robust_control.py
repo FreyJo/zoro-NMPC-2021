@@ -32,6 +32,7 @@
 #
 
 import sys
+import os
 from casadi.casadi import sqrt
 import numpy as np
 import scipy.linalg
@@ -49,6 +50,8 @@ from utils import *
 import matplotlib.pyplot as plt
 
 def run_tailored_robust_control(chain_params):
+    ID = "zoRO"
+
     # create ocp object to formulate the OCP
     ocp = AcadosOcp()
 
@@ -188,10 +191,14 @@ def run_tailored_robust_control(chain_params):
     # set prediction horizon
     ocp.solver_options.tf = Tf
 
+    ocp.code_export_directory = "c_generated_code" + "_" + ID
 
     # acados_integrator = AcadosSimSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
     acados_integrator = export_chain_mass_integrator(n_mass, m, D, L)
     acados_ocp_solver = AcadosOcpSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
+    # AcadosOcpSolver.generate(ocp, json_file='acados_ocp_' + model.name + '.json')
+    # AcadosOcpSolver.build(ocp.code_export_directory, with_cython=True)
+    # acados_ocp_solver = AcadosOcpSolver.create_cython_solver('acados_ocp_' + model.name + '.json')
 
 
     #%% get initial state from xrest
@@ -280,7 +287,7 @@ def run_tailored_robust_control(chain_params):
                 # check on residuals and terminate loop.
                 # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")
                 residuals = acados_ocp_solver.get_residuals()
-                print("residuals after ", i_sqp, "SQP_RTI iterations:\n", residuals)
+                # print("residuals after ", i_sqp, "SQP_RTI iterations:\n", residuals)
 
                 if status != 0:
                     raise Exception('acados acados_ocp_solver returned status {} in time step {}. Exiting.'.format(status, i))
@@ -338,5 +345,4 @@ def run_tailored_robust_control(chain_params):
 
     #%% save results
     if save_results:
-        ID = "zoRO"
         save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
