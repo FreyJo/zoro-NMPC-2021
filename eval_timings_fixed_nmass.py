@@ -1,13 +1,13 @@
-from utils import *
+from utils import load_results_from_json, get_chain_params
 import numpy as np
 from plot_utils import timings_plot
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "zoRO", "robust"]
-Seeds = range(1,6)
+IDs = ["nominal", "fastzoRO", "zoRO", "robust"]
+Seeds = range(1, 2)
 
-for n_mass in range(3,8):
+for n_mass in [3, 6]:
 
     timings = {id:[] for id in IDs}
 

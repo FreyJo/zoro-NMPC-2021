@@ -44,7 +44,7 @@ def export_chain_mass_integrator(n_mass, m, D, L):
     # sim.solver_options.nlp_solver_tol_eq = 1e-9
 
     # set prediction horizon
-    sim.solver_options.Tsim = Ts
+    sim.solver_options.T = Ts
 
     # acados_ocp_solver = AcadosOcpSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
     acados_integrator = AcadosSimSolver(sim, json_file = 'acados_ocp_' + model.name + '.json')

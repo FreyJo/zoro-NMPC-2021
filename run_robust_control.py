@@ -28,7 +28,6 @@
 # POSSIBILITY OF SUCH DAMAGE.;
 #
 
-import sys
 import numpy as np
 import scipy.linalg
 import casadi as ca

@@ -4,9 +4,9 @@ from plot_utils import constraint_violation_box_plot
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "zoRO", "robust"]
-Seeds = range(1,29)
-n_mass = 5
+IDs = ["nominal", "fastzoRO", "zoRO", "robust"]
+Seeds = range(1,30)
+n_mass = 3
 
 dist_dict = {id:[] for id in IDs}
 

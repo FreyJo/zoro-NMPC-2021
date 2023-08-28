@@ -1,5 +1,5 @@
 import os
-import scipy, json
+import json
 import numpy as np
 import casadi as ca
 from export_chain_mass_model import export_chain_mass_model

@@ -36,7 +36,7 @@ import scipy.linalg
 
 from time import process_time
 
-from acados_template import AcadosOcp, AcadosOcpSolver, AcadosSimSolver
+from acados_template import AcadosOcp, AcadosOcpSolver, AcadosSimSolver, ZoroDescription
 
 from export_chain_mass_model import export_chain_mass_model
 from export_disturbed_chain_mass_model import export_disturbed_chain_mass_model
@@ -45,8 +45,6 @@ from export_chain_mass_integrator import export_chain_mass_integrator
 from plot_utils import *
 from utils import *
 import matplotlib.pyplot as plt
-
-from zoro_description import ZoroDescription, process_zoro_description
 
 def run_fastzoro_robust_control(chain_params):
     ID = "fastzoRO"
@@ -209,14 +207,19 @@ def run_fastzoro_robust_control(chain_params):
     zoro_description.P0_mat = 1e-3 * np.eye(nx)
     zoro_description.W_mat = W*Ts
     zoro_description.idx_lbx_t = list(range(nbx))
-    ocp.zoro_description = process_zoro_description(zoro_description)
+    ocp.zoro_description = zoro_description
 
     # acados_integrator = AcadosSimSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
     acados_integrator = export_chain_mass_integrator(n_mass, m, D, L)
-    # acados_ocp_solver = AcadosOcpSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
-    AcadosOcpSolver.generate(ocp, json_file='acados_ocp_' + model.name + '.json')
-    AcadosOcpSolver.build(ocp.code_export_directory, with_cython=True)
-    acados_ocp_solver = AcadosOcpSolver.create_cython_solver('acados_ocp_' + model.name + '.json')
+
+    ## OCP solver
+    # ctypes
+    acados_ocp_solver = AcadosOcpSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
+
+    # cython
+    # AcadosOcpSolver.generate(ocp, json_file='acados_ocp_' + model.name + '.json')
+    # AcadosOcpSolver.build(ocp.code_export_directory, with_cython=True)
+    # acados_ocp_solver = AcadosOcpSolver.create_cython_solver('acados_ocp_' + model.name + '.json')
 
 
     #%% get initial state from xrest

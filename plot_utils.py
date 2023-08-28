@@ -119,14 +119,14 @@ def plot_chain_position(x, xPosFirstMass):
     plt.xlabel('mass index ')
     plt.ylabel('mass position ')
     plt.grid(True)
-    
+
     plt.subplot(3,1,2)
     plt.plot(pos_y)
     plt.title('y position')
     plt.xlabel('mass index ')
     plt.ylabel('mass position ')
     plt.grid(True)
-    
+
     plt.subplot(3,1,3)
     plt.plot(pos_z)
     plt.title('z position')
@@ -161,7 +161,7 @@ def plot_chain_position_3D(X, xPosFirstMass, XNames=None):
             x = x.flatten()
         if len(xPosFirstMass.shape) > 1:
             xPosFirstMass = xPosFirstMass.flatten()
-        
+
         nx = x.shape[0]
         M = int((nx/3 -1)/2)
         pos = x[:3*(M+1)]
@@ -169,9 +169,9 @@ def plot_chain_position_3D(X, xPosFirstMass, XNames=None):
         pos_x = pos[::3]
         pos_y = pos[1::3]
         pos_z = pos[2::3]
-        
+
         ax.plot(pos_x, pos_y, pos_z, '.-', label=XNames[i])
-        
+
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
@@ -179,24 +179,24 @@ def plot_chain_position_3D(X, xPosFirstMass, XNames=None):
 
 
 def get_plot_lims(a):
-    
+
     a_min = np.amin(a)
     a_max = np.amax(a)
     # make sure limits are not equal to each other
     eps = 1e-12
     if np.abs(a_min - a_max) < eps:
-        a_min -= 1e-3 
-        a_max += 1e-3 
+        a_min -= 1e-3
+        a_max += 1e-3
 
     return (a_min, a_max)
-    
+
 
 def animate_chain_position(simX, xPosFirstMass, Ts=0.1, yPosWall=None):
     '''
     Creates animation of the chain, where simX contains the state trajectory.
     dt defines the time gap (in seconds) between two succesive entries.
     '''
-    
+
     # chain positions
     Nsim = simX.shape[0]
     nx = simX.shape[1]
@@ -209,14 +209,14 @@ def animate_chain_position(simX, xPosFirstMass, Ts=0.1, yPosWall=None):
 
 
     # limits in all three dimensions
-    
+
     # ylim_x = (np.amin( pos_x), np.amax( pos_x))
     # ylim_y = (np.amin( pos_y), np.amax( pos_y))
     # ylim_z = (np.amin( pos_z), np.amax( pos_z))
     # eps = 1e-12
     # if np.abs(ylim_x[0] - ylim_x[1]) < eps:
-    #     ylim_x[0] += 1e-3 
-    #     ylim_x[0] += 1e-3 
+    #     ylim_x[0] += 1e-3
+    #     ylim_x[0] += 1e-3
 
     ylim_x = get_plot_lims(pos_x)
     ylim_y = get_plot_lims(pos_y)
@@ -224,7 +224,7 @@ def animate_chain_position(simX, xPosFirstMass, Ts=0.1, yPosWall=None):
         ylim_y = (min(ylim_y[0], yPosWall) - 0.1, ylim_y[1])
     ylim_z = get_plot_lims(pos_z)
 
-    fig = plt.figure()    
+    fig = plt.figure()
     ax1 = fig.add_subplot(311, autoscale_on=False, xlim=(0,M+2), ylim=ylim_x)
     plt.grid(True)
     ax2 = fig.add_subplot(312, autoscale_on=False, xlim=(0,M+2), ylim=ylim_y)
@@ -243,13 +243,13 @@ def animate_chain_position(simX, xPosFirstMass, Ts=0.1, yPosWall=None):
     line1, = ax1.plot([], [], '.-')
     line2, = ax2.plot([], [], '.-')
     line3, = ax3.plot([], [], '.-')
-    
+
     lines = [line1, line2, line3]
-    
+
     if yPosWall is not None:
         ax2.plot(yPosWall*np.ones((Nsim,)))
-    
-        
+
+
     def init():
         # placeholder for data
         lines = [line1, line2, line3]
@@ -282,7 +282,7 @@ def animate_chain_position_3D(simX, xPosFirstMass, Ts=0.1):
     Create 3D animation of the chain, where simX contains the state trajectory.
     dt defines the time gap (in seconds) between two succesive entries.
     '''
-    
+
     # chain positions
     Nsim = simX.shape[0]
     nx = simX.shape[1]
@@ -300,7 +300,7 @@ def animate_chain_position_3D(simX, xPosFirstMass, Ts=0.1):
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d', autoscale_on=False, xlim=xlim, ylim=ylim, zlim=zlim)
-    
+
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
@@ -331,7 +331,7 @@ def animate_chain_position_3D(simX, xPosFirstMass, Ts=0.1):
                                   blit=True,)# init_func=init)
     plt.show()
     return ani
-    
+
 
 def timings_plot(timings, n_mass):
     # latexify plot
@@ -342,7 +342,7 @@ def timings_plot(timings, n_mass):
     # actual plot
     IDs = timings.keys()
     # plot timings
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6, 3.3))
     ax = plt.gca()
 
     i_ID = 0
@@ -378,7 +378,7 @@ def timings_plot_vary_mass(timings, N_masses):
     # actual plot
     IDs = timings.keys()
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6, 3.5))
     ax = plt.gca()
 
     for id in IDs:
@@ -402,16 +402,17 @@ def timings_plot_vary_mass(timings, N_masses):
     plt.ylabel("mean CPU time per OCP in [s]")
     plt.xticks(N_masses, N_masses)
     Legends = list(IDs)
+    Legends = ["naive" if id == "robust" else id for id in Legends]
 
     # add lines nx^3, nx^6
-    Legends.append(r"$n_\textrm{x}^{3}$")
-    plt.plot(N_masses, [2e-6*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
-    Legends.append(r"$n_\textrm{x}^{6}$")
+    Legends.append(r"$\mathcal{O}(n_\textrm{x}^{3})$")
+    plt.plot(N_masses, [4e-6*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
+    Legends.append(r"$\mathcal{O}(n_\textrm{x}^{6})$")
     plt.plot(N_masses, [1e-7*nmass_to_nx(nm)**6 for nm in N_masses], ':', color="gray")
     # Legends.append(r"$n_\textrm{x}^{9}$")
     # plt.plot(N_masses, [1e-10*nmass_to_nx(nm)**9 for nm in N_masses], '-.', color="gray")
 
-    plt.legend(Legends)
+    plt.legend(Legends, ncol=2)
     plt.savefig("figures/timings_vs_nmass" + ".pdf",\
         bbox_inches='tight', transparent=True, pad_inches=0.05)
 
@@ -443,7 +444,7 @@ def constraint_violation_box_plot(violations, n_mass):
         for id in IDs:
             violation = violations[id]
             data.append(violation)
-        ax.boxplot(data, positions = [0, 1, 2])
+        ax.boxplot(data, positions = range(len(IDs)))
 
     plt.plot( [-.5, len(IDs)-.5], [0,0], 'k')
 

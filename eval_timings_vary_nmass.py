@@ -4,9 +4,9 @@ from plot_utils import timings_plot_vary_mass
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "zoRO", "robust"]
-Seeds = range(1,6)
-N_masses = range(3,8)
+IDs = ["nominal", "fastzoRO", "zoRO", "robust"]
+Seeds = range(1,5)
+N_masses = range(3,7)
 
 # mass_dict = {nm: [] for nm in N_masses}
 timings = {id:dict() for id in IDs}
@@ -25,5 +25,3 @@ for id in IDs:
 # plot
 timings_plot_vary_mass(timings, N_masses)
 
-
-import pdb; pdb.set_trace()
