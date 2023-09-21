@@ -1,5 +1,7 @@
 __pycache__
-c_generated_code
+c_generated_code*
 .vscode
+*.json
 
-acados_*.json
+results
+figures
