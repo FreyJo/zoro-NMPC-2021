@@ -403,6 +403,8 @@ def timings_plot_vary_mass(timings, N_masses):
     plt.xticks(N_masses, N_masses)
     Legends = list(IDs)
     Legends = ["naive" if id == "robust" else id for id in Legends]
+    Legends = ["zoRO-24" if id == "fastzoRO" else id for id in Legends]
+    Legends = ["zoRO-21" if id == "zoRO" else id for id in Legends]
 
     # add lines nx^3, nx^6
     Legends.append(r"$\mathcal{O}(n_\textrm{x}^{3})$")
