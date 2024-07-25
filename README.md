@@ -7,9 +7,15 @@ by
 
 Andrea Zanelli, Jonathan Frey, Florian Messerer, Moritz Diehl
 
+# Update 2024:
+An efficient and customizable implementation of zoRO in `acados` is presented in:
 
-This code was used with acados version 0.1.3.
-https://github.com/acados/acados/releases/tag/0.1.3
+Efficient Zero-Order Robust Optimization for Real-Time Model Predictive Control with acados
+J. Frey, Y. Gao, F. Messerer, A. Lahr, M. N Zeilinger, M. Diehl
+Proceedings of the European Control Conference (ECC) (2024)
+
+https://publications.syscop.de/Frey2024.pdf
+
 
 ## References:
 https://github.com/dkouzoup/hanging-chain-acado
