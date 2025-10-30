@@ -46,8 +46,16 @@ from plot_utils import *
 from utils import *
 import matplotlib.pyplot as plt
 
-def run_fastzoro_robust_control(chain_params):
-    ID = "fastzoRO"
+def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
+    match zoro_riccati:
+        case -1:
+            ID = "fastzoRO-fixedK"
+        case 0:
+            ID = "fastzoRO-riccatiFixedQuad"
+        case 1:
+            ID = "fastzoRO-riccatiHessianV1"
+        case 2:
+            ID = "fastzoRO-riccatiHessianV2"
 
     # create ocp object to formulate the OCP
     ocp = AcadosOcp()
@@ -206,6 +214,12 @@ def run_fastzoro_robust_control(chain_params):
     zoro_description.P0_mat = 1e-3 * np.eye(nx)
     zoro_description.W_mat = W*Ts
     zoro_description.idx_lbx_t = list(range(nbx))
+    zoro_description.zoro_riccati = zoro_riccati
+    zoro_description.riccati_Qconst_e_mat = Q
+    zoro_description.riccati_Qconst_mat = Q * chain_params["Ts"]
+    zoro_description.riccati_Rconst_mat = R * chain_params["Ts"]
+    zoro_description.riccati_Sconst_mat = np.zeros((nu, nx))
+
     ocp.zoro_description = zoro_description
 
     # acados_integrator = AcadosSimSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
@@ -262,7 +276,7 @@ def run_fastzoro_robust_control(chain_params):
                 # preparation rti_phase
                 acados_ocp_solver.options_set('rti_phase', 1)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # Disturbance propagation in custom_update
                 t1 = process_time()
@@ -272,7 +286,7 @@ def run_fastzoro_robust_control(chain_params):
                 # feedback rti_phase
                 acados_ocp_solver.options_set('rti_phase', 2)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # check on residuals and terminate loop.
                 # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")

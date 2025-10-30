@@ -12,12 +12,16 @@ for n_mass in range(3, 7):
         # adjust parameters wrt experiment
         chain_params["seed"] = seed
         chain_params["n_mass"] = n_mass
+        chain_params["save_results"] = True
 
         # run all versions
-        run_fastzoro_robust_control(chain_params)
         run_nominal_control(chain_params)
-        run_robust_control(chain_params)
-        run_tailored_robust_control(chain_params)
+        run_fastzoro_robust_control(chain_params, zoro_riccati=-1)
+        run_fastzoro_robust_control(chain_params, zoro_riccati=0)
+        run_fastzoro_robust_control(chain_params, zoro_riccati=1)
+        run_fastzoro_robust_control(chain_params, zoro_riccati=2)
+        # run_robust_control(chain_params)
+        # run_tailored_robust_control(chain_params)
 
 
 # for n_mass in [5]:

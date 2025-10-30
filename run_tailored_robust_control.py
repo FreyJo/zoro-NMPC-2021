@@ -242,7 +242,7 @@ def run_tailored_robust_control(chain_params):
                 # preparation rti_phase
                 acados_ocp_solver.options_set('rti_phase', 1)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # hardcode B for discrete time disturbance
                 B = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
@@ -278,7 +278,7 @@ def run_tailored_robust_control(chain_params):
                 # feedback rti_phase
                 acados_ocp_solver.options_set('rti_phase', 2)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # check on residuals and terminate loop.
                 # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")

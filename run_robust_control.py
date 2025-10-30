@@ -272,7 +272,7 @@ def run_robust_control(chain_params):
             P = vec2sym_mat(xocp[nx_orig:], nx_orig)
             Pposdef[i,j] = is_pos_def(P)
 
-        timings[i] = acados_ocp_solver.get_stats("time_tot")[0]
+        timings[i] = acados_ocp_solver.get_stats("time_tot")
 
         yPos = xcurrent[range(1,3*M+1,3)]
         wall_dist[i] = np.min(yPos - yPosWall)
