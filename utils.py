@@ -24,7 +24,7 @@ def get_chain_params():
     params["show_plots"] = False
     params["nlp_iter"] = 50
     params["seed"] = 50
-    params["nlp_tol"] = 1e-5
+    params["nlp_tol"] = 1e-6
 
     return params
 
@@ -156,7 +156,7 @@ def save_results_as_json(result_dict, json_file):
     return
 
 
-def save_closed_loop_results_as_json(ID, timings, timings_P, wall_dist, chain_params):
+def save_closed_loop_results_as_json(ID, timings, timings_P, wall_dist, num_nlp_iter, step_nlp_iter, chain_params):
 
     result_dict = dict()
 
@@ -164,6 +164,8 @@ def save_closed_loop_results_as_json(ID, timings, timings_P, wall_dist, chain_pa
     result_dict["wall_dist"] = wall_dist
     result_dict["timings_P"] = timings_P
     result_dict["chain_params"] = chain_params
+    result_dict["num_nlp_iter"] = num_nlp_iter
+    result_dict["step_nlp_iter"] = step_nlp_iter
 
     if not os.path.isdir('results'):
         os.makedirs('results')
@@ -189,3 +191,12 @@ def load_results_from_json(ID, chain_params):
         results = json.load(f)
 
     return results
+
+
+def get_input_state_trajectory(x:np.ndarray, u:np.ndarray, solver):
+    N = u.shape[0]
+    for idx_stage in range(N):
+        x[idx_stage, :] = solver.get(idx_stage, "x")
+        u[idx_stage, :] = solver.get(idx_stage, "u")
+    x[N, :] = solver.get(N, "x")
+    return

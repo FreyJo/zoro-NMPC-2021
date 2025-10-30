@@ -233,6 +233,8 @@ def run_robust_control(chain_params):
 
     timings = np.zeros((N_sim,))
     Pposdef = np.zeros((N_sim, N))
+    num_nlp_iter = np.zeros((N_sim,))
+    step_nlp_iter = np.zeros((N_sim))
 
     xcurrent_aug = np.hstack((xcurrent.flatten(), P0_vec))
 
@@ -295,4 +297,4 @@ def run_robust_control(chain_params):
     if save_results:
         ID = "robust"
         timings_Pprop = np.zeros((N_sim,))
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
+        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)

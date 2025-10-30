@@ -173,6 +173,8 @@ def run_nominal_control(chain_params):
     wall_dist = np.zeros((N_sim,))
 
     timings = np.zeros((N_sim,))
+    num_nlp_iter = np.zeros((N_sim,))
+    step_nlp_iter = np.zeros((N_sim))
 
     simX[0,:] = xcurrent
 
@@ -203,6 +205,8 @@ def run_nominal_control(chain_params):
         if status != 0:
             raise Exception('acados integrator returned status {}. Exiting.'.format(status))
 
+        num_nlp_iter[i] = acados_ocp_solver.get_stats("nlp_iter")
+
         # update state
         xcurrent = acados_integrator.get("x")
         simX[i+1,:] = xcurrent
@@ -229,4 +233,4 @@ def run_nominal_control(chain_params):
     if save_results:
         ID = "nominal"
         timings_Pprop = np.zeros((N_sim,))
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
+        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)

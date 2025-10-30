@@ -219,7 +219,7 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
     zoro_description.riccati_Qconst_mat = Q * chain_params["Ts"]
     zoro_description.riccati_Rconst_mat = R * chain_params["Ts"]
     zoro_description.riccati_Sconst_mat = np.zeros((nu, nx))
-
+    zoro_description.input_P0 = False
     ocp.zoro_description = zoro_description
 
     # acados_integrator = AcadosSimSolver(ocp, json_file = 'acados_ocp_' + model.name + '.json')
@@ -256,8 +256,14 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
 
     timings = np.zeros((N_sim,))
     timings_Pprop = np.zeros((N_sim,))
+    num_nlp_iter = np.zeros((N_sim,))
+    step_nlp_iter = np.zeros((N_sim))
 
     simX[0,:] = xcurrent
+    x_last_iter = np.full((N+1, nx), 1e3)
+    u_last_iter = np.full((N, nu), 1e3)
+    x_cur_iter = np.full((N+1, nx), 1e3)
+    u_cur_iter = np.full((N, nu), 1e3)
 
     nbx = M + 1
     lbx = np.zeros((nbx,))
@@ -293,11 +299,21 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
                 residuals = acados_ocp_solver.get_residuals()
                 # print("residuals after ", i_sqp, "SQP_RTI iterations:\n", residuals)
 
+                get_input_state_trajectory(x_cur_iter, u_cur_iter, acados_ocp_solver)
+                step_nlp_iter[i] = max(np.linalg.norm(x_cur_iter - x_last_iter, np.inf), np.linalg.norm(u_cur_iter - u_last_iter, np.inf))
+
                 if status != 0:
                     raise Exception('acados acados_ocp_solver returned status {} in time step {}. Exiting.'.format(status, i))
 
-                if max(residuals) < nlp_tol:
+                if step_nlp_iter[i] < nlp_tol:
+                    num_nlp_iter[i] = i_sqp+1
                     break
+
+                x_last_iter = x_cur_iter.copy()
+                u_last_iter = u_cur_iter.copy()
+
+            if step_nlp_iter[i] >= nlp_tol:
+                num_nlp_iter[i] = ocp.solver_options.nlp_solver_max_iter+1
 
         else:
             status = acados_ocp_solver.solve()
@@ -349,4 +365,4 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
 
     #%% save results
     if save_results:
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
+        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)
