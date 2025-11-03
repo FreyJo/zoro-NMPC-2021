@@ -206,10 +206,10 @@ def run_fastzoro_robust_control(chain_params, feedback_optimization_mode: str = 
     zoro_description.W_mat = W*Ts
     zoro_description.idx_lbx_t = list(range(nbx))
     zoro_description.feedback_optimization_mode = feedback_optimization_mode
-    zoro_description.riccati_Qconst_e_mat = Q
-    zoro_description.riccati_Qconst_mat = Q * chain_params["Ts"]
-    zoro_description.riccati_Rconst_mat = R * chain_params["Ts"]
-    zoro_description.riccati_Sconst_mat = np.zeros((nu, nx))
+    zoro_description.riccati_Q_const_e_mat = Q
+    zoro_description.riccati_Q_const_mat = Q * chain_params["Ts"]
+    zoro_description.riccati_R_const_mat = R * chain_params["Ts"]
+    zoro_description.riccati_S_const_mat = np.zeros((nu, nx))
     zoro_description.input_P0 = False
     ocp.zoro_description = zoro_description
 
