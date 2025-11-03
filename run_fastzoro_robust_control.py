@@ -46,16 +46,7 @@ from plot_utils import *
 from utils import *
 import matplotlib.pyplot as plt
 
-def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
-    match zoro_riccati:
-        case -1:
-            ID = "fastzoRO-fixedK"
-        case 0:
-            ID = "fastzoRO-riccatiFixedQuad"
-        case 1:
-            ID = "fastzoRO-riccatiHessianV1"
-        case 2:
-            ID = "fastzoRO-riccatiHessianV2"
+def run_fastzoro_robust_control(chain_params, feedback_optimization_mode: str = "CONSTANT_FEEDBACK"):
 
     # create ocp object to formulate the OCP
     ocp = AcadosOcp()
@@ -195,7 +186,7 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
     # set prediction horizon
     ocp.solver_options.tf = Tf
 
-    ocp.code_export_directory = "c_generated_code" + "_" + ID
+    ocp.code_export_directory = f"c_generated_code_{feedback_optimization_mode}"
 
     # custom update: disturbance propagation
     ocp.solver_options.custom_update_filename = 'custom_update_function.c'
@@ -214,7 +205,7 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
     zoro_description.P0_mat = 1e-3 * np.eye(nx)
     zoro_description.W_mat = W*Ts
     zoro_description.idx_lbx_t = list(range(nbx))
-    zoro_description.zoro_riccati = zoro_riccati
+    zoro_description.feedback_optimization_mode = feedback_optimization_mode
     zoro_description.riccati_Qconst_e_mat = Q
     zoro_description.riccati_Qconst_mat = Q * chain_params["Ts"]
     zoro_description.riccati_Rconst_mat = R * chain_params["Ts"]
@@ -365,4 +356,4 @@ def run_fastzoro_robust_control(chain_params, zoro_riccati:int=-1):
 
     #%% save results
     if save_results:
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)
+        save_closed_loop_results_as_json(feedback_optimization_mode, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)
