@@ -4,7 +4,7 @@ from plot_utils import timings_plot_vary_mass, num_nlp_iters_plot
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "fastzoRO-fixedK", "fastzoRO-riccatiFixedQuad", "fastzoRO-riccatiHessianV1", "fastzoRO-riccatiHessianV2"]
+IDs = ["nominal", "CONSTANT_FEEDBACK", "RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust"]
 Seeds = range(1,5)
 N_masses = range(3,7)
 

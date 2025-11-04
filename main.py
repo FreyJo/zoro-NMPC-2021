@@ -19,18 +19,6 @@ for n_mass in range(3, 7):
         run_fastzoro_robust_control(chain_params, feedback_optimization_mode="CONSTANT_FEEDBACK")
         run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_CONSTANT_COST")
         run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_BARRIER_1")
-        run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_BARRIER_2")
-        # run_robust_control(chain_params)
+        # run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_BARRIER_2")
+        run_robust_control(chain_params)
         # run_tailored_robust_control(chain_params)
-
-
-# for n_mass in [5]:
-#     for seed in range(10, 51):
-#         # adjust parameters wrt experiment
-#         chain_params["seed"] = seed
-#         chain_params["n_mass"] = n_mass
-
-#         # run all versions
-#         run_nominal_control(chain_params)
-#         run_robust_control(chain_params)
-#         run_tailored_robust_control(chain_params)
