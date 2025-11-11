@@ -4,7 +4,10 @@ from plot_utils import timings_plot_vary_mass, num_nlp_iters_plot
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "CONSTANT_FEEDBACK", "RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust"]
+# IDs = ["nominal", "CONSTANT_FEEDBACK", "RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust"]
+IDs = ["RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust","CONSTANT_FEEDBACK",  "nominal"]
+
+
 Seeds = range(1,5)
 N_masses = range(3,7)
 

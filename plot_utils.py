@@ -383,13 +383,9 @@ def timings_plot_vary_mass(timings, N_masses):
     ax = fig.add_subplot(1,1,1)
 
     Legends = []
-    # plot O(nx^3), O(nx^6)
-    Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
-    plt.plot(nxs, [1e-5*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
-    Legends.append(r"$\mathcal{O}(n_{x}^{6})$")
-    plt.plot(nxs, [1e-7*nmass_to_nx(nm)**6 for nm in N_masses], ':', color="gray")    
 
-    for id in IDs:
+    markers = ['s', 'o', 'v', 'x', '^', '^', 'v', 'P', '*']
+    for j, id in enumerate(IDs):
         timing = timings[id]
         mean_time = np.zeros(len(timing.keys()))
 
@@ -399,7 +395,7 @@ def timings_plot_vary_mass(timings, N_masses):
             i_nm += 1
 
         print(id, mean_time)
-        plt.plot(nxs, mean_time)
+        plt.plot(nxs, mean_time, marker=markers[j])
 
     xmin = np.min(nxs)
     xmax = np.max(nxs)
@@ -418,12 +414,19 @@ def timings_plot_vary_mass(timings, N_masses):
     ax.set_xticks(nxs, nxs)
 
     Legends.extend(list(IDs))
-    Legends = ["standard robust" if id == "robust" else id for id in Legends]
+    Legends = ["standard robust, $K=0$" if id == "robust" else id for id in Legends]
     Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
-    Legends = ["RZORO, const. Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
-    Legends = ["RZORO, barrier Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
+    Legends = ["Ricatti-ZORO, const. Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
+    Legends = ["Ricatti-ZORO, barrier Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
 
-    plt.legend(Legends, ncol=2, handlelength=1)
+    # plot O(nx^3), O(nx^6)
+    Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
+    plt.plot(nxs, [1e-5*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
+    Legends.append(r"$\mathcal{O}(n_{x}^{6})$")
+    plt.plot(nxs, [1e-7*nmass_to_nx(nm)**6 for nm in N_masses], ':', color="gray")    
+
+    # place outside to top
+    plt.legend(Legends, ncol=3, handlelength=1, loc='lower right', bbox_to_anchor=(1.02,1))
     plt.savefig("figures/timings_vs_nmass" + ".pdf",\
         bbox_inches='tight', transparent=True, pad_inches=0.05)
 
