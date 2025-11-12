@@ -416,8 +416,8 @@ def timings_plot_vary_mass(timings, N_masses):
     Legends.extend(list(IDs))
     Legends = ["standard robust, $K=0$" if id == "robust" else id for id in Legends]
     Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
-    Legends = ["Ricatti-ZORO, const. Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
-    Legends = ["Ricatti-ZORO, barrier Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
+    Legends = ["Riccati-ZORO, const. Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
+    Legends = ["Riccati-ZORO, barrier Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
 
     # plot O(nx^3), O(nx^6)
     Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
