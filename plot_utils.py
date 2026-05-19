@@ -377,11 +377,15 @@ def timings_plot_vary_mass(timings, N_masses):
 
     # actual plot
     IDs = timings.keys()
+    nxs = [(2*M + 1)*3 for M in N_masses]
 
     fig = plt.figure(figsize=(6, 3.5))
-    ax = plt.gca()
+    ax = fig.add_subplot(1,1,1)
 
-    for id in IDs:
+    Legends = []
+
+    markers = ['s', 'o', 'v', 'x', '^', '^', 'v', 'P', '*']
+    for j, id in enumerate(IDs):
         timing = timings[id]
         mean_time = np.zeros(len(timing.keys()))
 
@@ -391,34 +395,72 @@ def timings_plot_vary_mass(timings, N_masses):
             i_nm += 1
 
         print(id, mean_time)
-        plt.plot(N_masses, mean_time)
+        plt.plot(nxs, mean_time, marker=markers[j])
 
+    xmin = np.min(nxs)
+    xmax = np.max(nxs)
+    ax.set_xlim(xmin, xmax)
+    
     ax.set_yscale('log')
     ax.set_xscale('log')
+    ax.minorticks_off()
+    ax.grid()
 
-    plt.grid()
+    # ylim = ax.get_ylim()
+    # ax.set_ylim(ylim[0], ylim[1]*10)
 
-    plt.xlabel(r"$n_{\text{mass}}$")
-    plt.ylabel("mean CPU time per OCP in [s]")
-    plt.xticks(N_masses, N_masses)
-    Legends = list(IDs)
-    Legends = ["naive" if id == "robust" else id for id in Legends]
-    Legends = ["zoRO-24" if id == "fastzoRO" else id for id in Legends]
-    Legends = ["zoRO-21" if id == "zoRO" else id for id in Legends]
+    ax.set_xlabel(r"state space dimension $n_{x}$")
+    ax.set_ylabel(r"mean CPU time per OCP in $\mathrm{s}$")
+    ax.set_xticks(nxs, nxs)
 
-    # add lines nx^3, nx^6
-    Legends.append(r"$\mathcal{O}(n_\textrm{x}^{3})$")
-    plt.plot(N_masses, [4e-6*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
-    Legends.append(r"$\mathcal{O}(n_\textrm{x}^{6})$")
-    plt.plot(N_masses, [1e-7*nmass_to_nx(nm)**6 for nm in N_masses], ':', color="gray")
-    # Legends.append(r"$n_\textrm{x}^{9}$")
-    # plt.plot(N_masses, [1e-10*nmass_to_nx(nm)**9 for nm in N_masses], '-.', color="gray")
+    Legends.extend(list(IDs))
+    Legends = ["standard robust, $K=0$" if id == "robust" else id for id in Legends]
+    Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
+    Legends = ["Riccati-ZORO, constant Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
+    Legends = ["Riccati-ZORO, adaptive Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
 
-    plt.legend(Legends, ncol=2)
+    # plot O(nx^3), O(nx^6)
+    Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
+    plt.plot(nxs, [1e-5*nmass_to_nx(nm)**3 for nm in N_masses], '--', color="gray")
+    Legends.append(r"$\mathcal{O}(n_{x}^{6})$")
+    plt.plot(nxs, [1e-7*nmass_to_nx(nm)**6 for nm in N_masses], ':', color="gray")    
+
+    # place outside to top
+    plt.legend(Legends, ncol=3, handlelength=1, loc='lower right', bbox_to_anchor=(1.02,1))
     plt.savefig("figures/timings_vs_nmass" + ".pdf",\
         bbox_inches='tight', transparent=True, pad_inches=0.05)
 
     plt.show()
+
+
+def num_nlp_iters_plot(num_nlp_iters, N_masses):
+    # latexify plot
+    params = get_latex_plot_params()
+    matplotlib.rcParams.update(params)
+
+    # actual plot
+    IDs = num_nlp_iters.keys()
+
+    fig = plt.figure(figsize=(6, 3.5))
+    axes = fig.subplots(1, len(N_masses))
+
+    maxiter = 1
+    for ii, n_mass in enumerate(N_masses):
+        data = []
+        for ID in IDs:
+            data.append(num_nlp_iters[ID][n_mass])
+            maxiter = max(maxiter, max(num_nlp_iters[ID][n_mass]))
+        axes[ii].boxplot(data)
+        axes[ii].set_title(r"$n_x=$"+f"{(2*n_mass + 1)*3}")
+
+    for ii, n_mass in enumerate(N_masses):
+        axes[ii].set_ylim([0, maxiter + 1])
+
+    plt.savefig("figures/num_nlp_iters" + ".pdf",\
+        bbox_inches='tight', transparent=True, pad_inches=0.05)
+
+    plt.show()
+
 
 
 def constraint_violation_box_plot(violations, n_mass):

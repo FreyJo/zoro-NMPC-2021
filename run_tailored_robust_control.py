@@ -218,6 +218,8 @@ def run_tailored_robust_control(chain_params):
 
     timings = np.zeros((N_sim,))
     timings_Pprop = np.zeros((N_sim,))
+    num_nlp_iter = np.zeros((N_sim,))
+    step_nlp_iter = np.zeros((N_sim))
 
     simX[0,:] = xcurrent
 
@@ -242,7 +244,7 @@ def run_tailored_robust_control(chain_params):
                 # preparation rti_phase
                 acados_ocp_solver.options_set('rti_phase', 1)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # hardcode B for discrete time disturbance
                 B = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
@@ -278,7 +280,7 @@ def run_tailored_robust_control(chain_params):
                 # feedback rti_phase
                 acados_ocp_solver.options_set('rti_phase', 2)
                 status = acados_ocp_solver.solve()
-                timings[i] += acados_ocp_solver.get_stats("time_tot")[0]
+                timings[i] += acados_ocp_solver.get_stats("time_tot")
 
                 # check on residuals and terminate loop.
                 # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")
@@ -341,4 +343,4 @@ def run_tailored_robust_control(chain_params):
 
     #%% save results
     if save_results:
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
+        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)

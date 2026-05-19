@@ -1,15 +1,19 @@
 from utils import *
 import numpy as np
-from plot_utils import timings_plot_vary_mass
+from plot_utils import timings_plot_vary_mass, num_nlp_iters_plot
 
 chain_params = get_chain_params()
 
-IDs = ["nominal", "fastzoRO", "zoRO", "robust"]
+# IDs = ["nominal", "CONSTANT_FEEDBACK", "RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust"]
+IDs = ["RICCATI_CONSTANT_COST", "RICCATI_BARRIER_1", "robust","CONSTANT_FEEDBACK",  "nominal"]
+
+
 Seeds = range(1,5)
 N_masses = range(3,7)
 
 # mass_dict = {nm: [] for nm in N_masses}
 timings = {id:dict() for id in IDs}
+num_nlp_iters = {id:dict() for id in IDs}
 
 # load results
 for id in IDs:
@@ -21,7 +25,8 @@ for id in IDs:
             results = load_results_from_json(id, chain_params)
             total_timing = np.array(results["timings"]) + np.array(results["timings_P"])
             timings[id][n_mass] = timings[id][n_mass] + list(total_timing)
+            num_nlp_iters[id][n_mass] = results["num_nlp_iter"]
 
 # plot
 timings_plot_vary_mass(timings, N_masses)
-
+num_nlp_iters_plot(num_nlp_iters, N_masses)

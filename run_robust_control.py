@@ -233,6 +233,8 @@ def run_robust_control(chain_params):
 
     timings = np.zeros((N_sim,))
     Pposdef = np.zeros((N_sim, N))
+    num_nlp_iter = np.zeros((N_sim,))
+    step_nlp_iter = np.zeros((N_sim))
 
     xcurrent_aug = np.hstack((xcurrent.flatten(), P0_vec))
 
@@ -272,7 +274,7 @@ def run_robust_control(chain_params):
             P = vec2sym_mat(xocp[nx_orig:], nx_orig)
             Pposdef[i,j] = is_pos_def(P)
 
-        timings[i] = acados_ocp_solver.get_stats("time_tot")[0]
+        timings[i] = acados_ocp_solver.get_stats("time_tot")
 
         yPos = xcurrent[range(1,3*M+1,3)]
         wall_dist[i] = np.min(yPos - yPosWall)
@@ -295,4 +297,4 @@ def run_robust_control(chain_params):
     if save_results:
         ID = "robust"
         timings_Pprop = np.zeros((N_sim,))
-        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, chain_params)
+        save_closed_loop_results_as_json(ID, timings, timings_Pprop, wall_dist, num_nlp_iter, step_nlp_iter, chain_params)
