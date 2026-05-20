@@ -410,7 +410,7 @@ def timings_plot_vary_mass(timings, N_masses):
     # ax.set_ylim(ylim[0], ylim[1]*10)
 
     ax.set_xlabel(r"state space dimension $n_{x}$")
-    ax.set_ylabel(r"mean CPU time per OCP in $\mathrm{s}$")
+    ax.set_ylabel(r"mean computation time per OCP in $\mathrm{s}$")
     ax.set_xticks(nxs, nxs)
 
     Legends.extend(list(IDs))
@@ -418,6 +418,7 @@ def timings_plot_vary_mass(timings, N_masses):
     Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
     Legends = ["Riccati-ZORO, constant Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
     Legends = ["Riccati-ZORO, adaptive Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
+    Legends = ["ZORO Python" if id == "zoRO" else id for id in Legends]
 
     # plot O(nx^3), O(nx^6)
     Legends.append(r"$\mathcal{O}(n_{x}^{3})$")

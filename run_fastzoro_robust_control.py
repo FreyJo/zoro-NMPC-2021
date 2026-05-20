@@ -331,7 +331,6 @@ def run_fastzoro_robust_control(chain_params, feedback_optimization_mode: str = 
             raise Exception('acados integrator returned status {}. Exiting.'.format(status))
 
         # update state
-        # import pdb; pdb.set_trace()
         xcurrent = acados_integrator.get("x") + Ts * np.hstack((np.zeros(((M+1)*3,)), pertubation))
         simX[i+1,:] = xcurrent
 
