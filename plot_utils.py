@@ -384,7 +384,7 @@ def timings_plot_vary_mass(timings, N_masses):
 
     Legends = []
 
-    markers = ['s', 'o', 'v', 'x', '^', '^', 'v', 'P', '*']
+    markers = ['s', 'o', 'v', 'x', '^', '>', 'P', '*']
     for j, id in enumerate(IDs):
         timing = timings[id]
         mean_time = np.zeros(len(timing.keys()))
@@ -418,7 +418,7 @@ def timings_plot_vary_mass(timings, N_masses):
     Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
     Legends = ["Riccati-ZORO, constant Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
     Legends = ["Riccati-ZORO, adaptive Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
-    Legends = ["ZORO Python" if id == "zoRO" else id for id in Legends]
+    Legends = ["ZORO-2021" if id == "zoRO" else id for id in Legends]
 
     # plot O(nx^3), O(nx^6)
     Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
