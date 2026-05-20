@@ -21,4 +21,4 @@ for n_mass in range(3, 7):
         run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_BARRIER_1")
         # run_fastzoro_robust_control(chain_params, feedback_optimization_mode="RICCATI_BARRIER_2")
         run_robust_control(chain_params)
-        # run_tailored_robust_control(chain_params)
+        run_tailored_robust_control(chain_params)

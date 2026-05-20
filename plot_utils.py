@@ -384,7 +384,7 @@ def timings_plot_vary_mass(timings, N_masses):
 
     Legends = []
 
-    markers = ['s', 'o', 'v', 'x', '^', '^', 'v', 'P', '*']
+    markers = ['s', 'o', 'v', 'x', '^', '>', 'P', '*']
     for j, id in enumerate(IDs):
         timing = timings[id]
         mean_time = np.zeros(len(timing.keys()))
@@ -410,7 +410,7 @@ def timings_plot_vary_mass(timings, N_masses):
     # ax.set_ylim(ylim[0], ylim[1]*10)
 
     ax.set_xlabel(r"state space dimension $n_{x}$")
-    ax.set_ylabel(r"mean CPU time per OCP in $\mathrm{s}$")
+    ax.set_ylabel(r"mean computation time per OCP in $\mathrm{s}$")
     ax.set_xticks(nxs, nxs)
 
     Legends.extend(list(IDs))
@@ -418,6 +418,7 @@ def timings_plot_vary_mass(timings, N_masses):
     Legends = ["ZORO" if id == "CONSTANT_FEEDBACK" else id for id in Legends]
     Legends = ["Riccati-ZORO, constant Hess." if id == "RICCATI_CONSTANT_COST" else id for id in Legends]
     Legends = ["Riccati-ZORO, adaptive Hess." if id == "RICCATI_BARRIER_1" else id for id in Legends]
+    Legends = ["ZORO-2021" if id == "zoRO" else id for id in Legends]
 
     # plot O(nx^3), O(nx^6)
     Legends.append(r"$\mathcal{O}(n_{x}^{3})$")
@@ -450,8 +451,9 @@ def num_nlp_iters_plot(num_nlp_iters, N_masses):
         for ID in IDs:
             data.append(num_nlp_iters[ID][n_mass])
             maxiter = max(maxiter, max(num_nlp_iters[ID][n_mass]))
-        axes[ii].boxplot(data)
+        axes[ii].boxplot(data, labels=list(IDs))
         axes[ii].set_title(r"$n_x=$"+f"{(2*n_mass + 1)*3}")
+        axes[ii].tick_params(axis='x', rotation=90)
 
     for ii, n_mass in enumerate(N_masses):
         axes[ii].set_ylim([0, maxiter + 1])
