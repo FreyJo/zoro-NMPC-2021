@@ -248,6 +248,7 @@ def run_tailored_robust_control(chain_params):
 
                 # hardcode B for discrete time disturbance
                 B = np.vstack(( np.zeros((nx - nparam, nparam)), np.eye(nparam)))
+                t1 = process_time()
                 for stage in range(N):
                     # get A matrices
                     A = acados_ocp_solver.get_from_qp_in(stage, "A")
@@ -255,9 +256,7 @@ def run_tailored_robust_control(chain_params):
 
                     P_mat_old = P_mat_list[stage+1]
 
-                    t1 = process_time()
                     P_mat_list[stage+1] = P_propagation(P_mat_list[stage], A, B, W*Ts)
-                    timings_Pprop[i] += process_time() - t1
 
                     if isinstance(P_mat_old, type(None)):
                         # i == 0
@@ -275,6 +274,7 @@ def run_tailored_robust_control(chain_params):
                     if stage > 0:
                         acados_ocp_solver.constraints_set(stage, "lbx", lbx)
 
+                timings_Pprop[i] += process_time() - t1
                 # - h <-> wall constraint
 
                 # feedback rti_phase
@@ -284,13 +284,14 @@ def run_tailored_robust_control(chain_params):
 
                 # check on residuals and terminate loop.
                 # acados_ocp_solver.print_statistics() # encapsulates: stat = acados_ocp_solver.get_stats("statistics")
-                residuals = acados_ocp_solver.get_residuals()
+                residuals = acados_ocp_solver.get_residuals(recompute=True)
                 # print("residuals after ", i_sqp, "SQP_RTI iterations:\n", residuals)
 
                 if status != 0:
                     raise Exception('acados acados_ocp_solver returned status {} in time step {}. Exiting.'.format(status, i))
 
                 if max(residuals) < nlp_tol:
+                    num_nlp_iter[i] = i_sqp + 1
                     break
 
         else:

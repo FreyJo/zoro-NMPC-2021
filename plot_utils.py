@@ -451,8 +451,9 @@ def num_nlp_iters_plot(num_nlp_iters, N_masses):
         for ID in IDs:
             data.append(num_nlp_iters[ID][n_mass])
             maxiter = max(maxiter, max(num_nlp_iters[ID][n_mass]))
-        axes[ii].boxplot(data)
+        axes[ii].boxplot(data, labels=list(IDs))
         axes[ii].set_title(r"$n_x=$"+f"{(2*n_mass + 1)*3}")
+        axes[ii].tick_params(axis='x', rotation=45)
 
     for ii, n_mass in enumerate(N_masses):
         axes[ii].set_ylim([0, maxiter + 1])
